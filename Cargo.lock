@@ -92,6 +92,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "azul-webrender-build"
+version = "0.0.1"
+dependencies = [
+ "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.106 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "backtrace"
 version = "0.3.46"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1537,10 +1545,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "swgl"
 version = "0.1.0"
 dependencies = [
+ "azul-webrender-build 0.0.1",
  "cc 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
  "gleam 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "glsl-to-cxx 0.1.0",
- "webrender_build 0.0.1",
 ]
 
 [[package]]
@@ -1752,6 +1760,7 @@ name = "webrender"
 version = "0.61.0"
 dependencies = [
  "azul-webrender-api 0.61.0",
+ "azul-webrender-build 0.0.1",
  "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1784,7 +1793,6 @@ dependencies = [
  "svg_fmt 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "time 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)",
  "tracy-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "webrender_build 0.0.1",
  "wr_malloc_size_of 0.0.1",
  "ws 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -1802,14 +1810,6 @@ dependencies = [
  "rayon 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "webrender 0.61.0",
  "winit 0.19.5 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "webrender_build"
-version = "0.0.1"
-dependencies = [
- "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.106 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
