@@ -14,7 +14,7 @@ use crate::renderer::{
     TextureSampler, VertexArrayKind, ShaderPrecacheFlags,
 };
 
-use gleam::gl::GlType;
+use gl_context_loader::GlType;
 use time::precise_time_ns;
 
 use std::cell::RefCell;

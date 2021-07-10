@@ -927,7 +927,7 @@ impl Renderer {
     /// ```
     /// [rendereroptions]: struct.RendererOptions.html
     pub fn new(
-        gl: Rc<dyn gl::Gl>,
+        gl: Rc<gl_context_loader::GenericGlContext>,
         notifier: Box<dyn RenderNotifier>,
         mut options: RendererOptions,
         shaders: Option<&SharedShaders>,

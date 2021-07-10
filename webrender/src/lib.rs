@@ -181,7 +181,6 @@ extern crate bincode;
 extern crate byteorder;
 pub extern crate euclid;
 extern crate fxhash;
-extern crate gleam;
 extern crate num_traits;
 extern crate plane_split;
 extern crate rayon;

@@ -8,7 +8,6 @@ use api::{MixBlendMode, ImageBufferKind, VoidPtrToSizeFn};
 use api::{CrashAnnotator, CrashAnnotation, CrashAnnotatorGuard};
 use api::units::*;
 use euclid::default::Transform3D;
-use gleam::gl;
 use crate::render_api::MemoryReport;
 use crate::internal_types::{FastHashMap, RenderTargetInfo, Swizzle, SwizzleSettings};
 use crate::util::round_up_to_multiple;
@@ -1050,11 +1049,11 @@ impl StrideAlignment {
 const RESERVE_DEPTH_BITS: i32 = 2;
 
 pub struct Device {
-    gl: Rc<dyn gl::Gl>,
+    gl: Rc<gl_context_loader::GenericGlContext>,
 
     /// If non-None, |gl| points to a profiling wrapper, and this points to the
     /// underling Gl instance.
-    base_gl: Option<Rc<dyn gl::Gl>>,
+    base_gl: Option<Rc<gl_context_loader::GenericGlContext>>,
 
     // device state
     bound_textures: [gl::GLuint; 16],
@@ -1368,7 +1367,7 @@ impl From<DrawTarget> for ReadTarget {
 
 impl Device {
     pub fn new(
-        mut gl: Rc<dyn gl::Gl>,
+        mut gl: Rc<gl_context_loader::GenericGlContext>,
         crash_annotator: Option<Box<dyn CrashAnnotator>>,
         resource_override_path: Option<PathBuf>,
         use_optimized_shaders: bool,
@@ -1800,7 +1799,7 @@ impl Device {
         &*self.gl
     }
 
-    pub fn rc_gl(&self) -> &Rc<dyn gl::Gl> {
+    pub fn rc_gl(&self) -> &Rc<gl_context_loader::GenericGlContext> {
         &self.gl
     }
 

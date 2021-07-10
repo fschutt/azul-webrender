@@ -2,7 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-use gleam::gl;
 use std::mem;
 use std::rc::Rc;
 
@@ -67,7 +66,7 @@ impl<T> QuerySet<T> {
 }
 
 pub struct GpuFrameProfile {
-    gl: Rc<dyn gl::Gl>,
+    gl: Rc<gl_context_loader::GenericGlContext>,
     timers: QuerySet<GpuTimer>,
     samplers: QuerySet<GpuSampler>,
     frame_id: GpuFrameId,
@@ -76,7 +75,7 @@ pub struct GpuFrameProfile {
 }
 
 impl GpuFrameProfile {
-    fn new(gl: Rc<dyn gl::Gl>, debug_method: GpuDebugMethod) -> Self {
+    fn new(gl: Rc<gl_context_loader::GenericGlContext>, debug_method: GpuDebugMethod) -> Self {
         GpuFrameProfile {
             gl,
             timers: QuerySet::new(),
@@ -186,14 +185,14 @@ impl Drop for GpuFrameProfile {
 const NUM_PROFILE_FRAMES: usize = 4;
 
 pub struct GpuProfiler {
-    gl: Rc<dyn gl::Gl>,
+    gl: Rc<gl_context_loader::GenericGlContext>,
     frames: [GpuFrameProfile; NUM_PROFILE_FRAMES],
     next_frame: usize,
     debug_method: GpuDebugMethod
 }
 
 impl GpuProfiler {
-    pub fn new(gl: Rc<dyn gl::Gl>, debug_method: GpuDebugMethod) -> Self {
+    pub fn new(gl: Rc<gl_context_loader::GenericGlContext>, debug_method: GpuDebugMethod) -> Self {
         let f = || GpuFrameProfile::new(Rc::clone(&gl), debug_method);
 
         let frames = [f(), f(), f(), f()];
@@ -272,11 +271,11 @@ impl GpuProfiler {
 
 #[must_use]
 pub struct GpuMarker {
-    gl: Option<(Rc<dyn gl::Gl>, GpuDebugMethod)>,
+    gl: Option<(Rc<gl_context_loader::GenericGlContext>, GpuDebugMethod)>,
 }
 
 impl GpuMarker {
-    fn new(gl: &Rc<dyn gl::Gl>, message: &str, debug_method: GpuDebugMethod) -> Self {
+    fn new(gl: &Rc<gl_context_loader::GenericGlContext>, message: &str, debug_method: GpuDebugMethod) -> Self {
         let gl = match debug_method {
             GpuDebugMethod::KHR => {
               gl.push_debug_group_khr(gl::DEBUG_SOURCE_APPLICATION, 0, message);
@@ -291,7 +290,7 @@ impl GpuMarker {
         GpuMarker { gl }
     }
 
-    fn fire(gl: &Rc<dyn gl::Gl>, message: &str, debug_method: GpuDebugMethod) {
+    fn fire(gl: &Rc<gl_context_loader::GenericGlContext>, message: &str, debug_method: GpuDebugMethod) {
         match debug_method {
             GpuDebugMethod::KHR => gl.debug_message_insert_khr(gl::DEBUG_SOURCE_APPLICATION, gl::DEBUG_TYPE_MARKER, 0, gl::DEBUG_SEVERITY_NOTIFICATION, message),
             GpuDebugMethod::MarkerEXT => gl.insert_event_marker_ext(message),

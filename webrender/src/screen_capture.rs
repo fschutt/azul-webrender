@@ -8,7 +8,7 @@ use std::collections::HashMap;
 
 use api::{ImageFormat, ImageBufferKind};
 use api::units::*;
-use gleam::gl::GlType;
+use gl_context_loader::GlType;
 
 use crate::device::{Device, PBO, DrawTarget, ReadTarget, Texture, TextureFilter};
 use crate::internal_types::RenderTargetInfo;

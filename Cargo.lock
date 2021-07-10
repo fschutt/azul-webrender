@@ -100,7 +100,7 @@ dependencies = [
  "euclid",
  "freetype",
  "fxhash",
- "gleam 0.13.1",
+ "gl-context-loader",
  "glslopt",
  "lazy_static",
  "libc",
@@ -676,6 +676,12 @@ checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
 dependencies = [
  "byteorder",
 ]
+
+[[package]]
+name = "gl-context-loader"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a251c188852eb9dba97ddc82adc02ca5d54d4b685a3dd1ee795c08b22767497"
 
 [[package]]
 name = "gl_generator"
