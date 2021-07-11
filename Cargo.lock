@@ -82,6 +82,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8aac770f1885fd7e387acedd76065302551364496e46b3dd00860b2f8359b9d"
 
 [[package]]
+name = "azul-glsl-to-cxx"
+version = "0.1.0"
+dependencies = [
+ "glsl",
+]
+
+[[package]]
 name = "azul-peek-poke"
 version = "0.2.0"
 dependencies = [
@@ -104,10 +111,10 @@ dependencies = [
 name = "azul-swgl"
 version = "0.1.0"
 dependencies = [
+ "azul-glsl-to-cxx",
+ "azul-webrender-build",
  "cc",
  "gl-context-loader",
- "glsl-to-cxx",
- "webrender_build",
 ]
 
 [[package]]
@@ -116,6 +123,7 @@ version = "0.62.0"
 dependencies = [
  "azul-swgl",
  "azul-webrender-api",
+ "azul-webrender-build",
  "azul-wr_malloc_size_of",
  "bincode",
  "bitflags",
@@ -150,7 +158,6 @@ dependencies = [
  "svg_fmt",
  "time",
  "tracy-rs",
- "webrender_build",
 ]
 
 [[package]]
@@ -172,6 +179,15 @@ dependencies = [
  "serde_bytes",
  "serde_derive",
  "time",
+]
+
+[[package]]
+name = "azul-webrender-build"
+version = "0.0.2"
+dependencies = [
+ "bitflags",
+ "lazy_static",
+ "serde",
 ]
 
 [[package]]
@@ -767,13 +783,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "766443890761b3c4edcce86cafaac97971b200662fbdd0446eb7c6b99b4401ea"
 dependencies = [
  "nom",
-]
-
-[[package]]
-name = "glsl-to-cxx"
-version = "0.1.0"
-dependencies = [
- "glsl",
 ]
 
 [[package]]
@@ -1767,15 +1776,6 @@ dependencies = [
  "glutin",
  "rayon",
  "winit",
-]
-
-[[package]]
-name = "webrender_build"
-version = "0.0.1"
-dependencies = [
- "bitflags",
- "lazy_static",
- "serde",
 ]
 
 [[package]]
