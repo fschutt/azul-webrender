@@ -24,7 +24,7 @@ webrender = { path = "../webrender", package="azul-webrender", features = ["capt
 winit = "0.19"
 serde = { version = "1.0", features = ["derive"] }
 semver = "0.9.0"
-swgl = { path = "../swgl", optional = true }
+swgl = { path = "../swgl", package="azul-swgl", version = "0.1.0", optional = true }
 tracy-rs = "0.1.2"
 
 [dependencies.image]

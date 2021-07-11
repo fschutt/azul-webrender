@@ -1,5 +1,5 @@
 [package]
-name = "swgl"
+name = "azul-swgl"
 version = "0.1.0"
 license = "MPL-2.0"
 authors = ["The Mozilla Project Developers"]
@@ -12,4 +12,4 @@ glsl-to-cxx = { path = "../glsl-to-cxx" }
 webrender_build = { path = "../webrender_build" }
 
 [dependencies]
-gleam = "0.13.1"
+gl-context-loader = { version = "0.1.3", default-features = false }

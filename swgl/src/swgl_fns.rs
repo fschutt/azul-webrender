@@ -3,11 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #![allow(unused_variables)]
 
-use gleam::gl::*;
+use gl_context_loader::*;
+use gl_context_loader::gl::*;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_void};
 use std::ptr;
 use std::str;
+
+pub type GLdouble = gl_context_loader::c_double;
 
 #[allow(unused)]
 macro_rules! debug {
@@ -495,12 +498,12 @@ fn calculate_length(width: GLsizei, height: GLsizei, format: GLenum, pixel_type:
     return (width * height * colors * depth) as usize;
 }
 
-impl Gl for Context {
-    fn get_type(&self) -> GlType {
+impl Context {
+    pub fn get_type(&self) -> GlType {
         GlType::Gl
     }
 
-    fn buffer_data_untyped(
+    pub fn buffer_data_untyped(
         &self,
         target: GLenum,
         size: GLsizeiptr,
@@ -517,7 +520,7 @@ impl Gl for Context {
         }
     }
 
-    fn buffer_sub_data_untyped(
+    pub fn buffer_sub_data_untyped(
         &self,
         target: GLenum,
         offset: isize,
@@ -534,11 +537,11 @@ impl Gl for Context {
         }
     }
 
-    fn map_buffer(&self, target: GLenum, access: GLbitfield) -> *mut c_void {
+    pub fn map_buffer(&self, target: GLenum, access: GLbitfield) -> *mut c_void {
         unsafe { MapBuffer(target, access) }
     }
 
-    fn map_buffer_range(
+    pub fn map_buffer_range(
         &self,
         target: GLenum,
         offset: GLintptr,
@@ -548,11 +551,11 @@ impl Gl for Context {
         unsafe { MapBufferRange(target, offset, length, access) }
     }
 
-    fn unmap_buffer(&self, target: GLenum) -> GLboolean {
+    pub fn unmap_buffer(&self, target: GLenum) -> GLboolean {
         unsafe { UnmapBuffer(target) }
     }
 
-    fn shader_source(&self, shader: GLuint, strings: &[&[u8]]) {
+    pub fn shader_source(&self, shader: GLuint, strings: &[&[u8]]) {
         //panic!();
         debug!("shader_source {}", shader);
         //for s in strings {
@@ -577,15 +580,15 @@ impl Gl for Context {
         panic!("unknown shader");
     }
 
-    fn tex_buffer(&self, target: GLenum, internal_format: GLenum, buffer: GLuint) {
+    pub fn tex_buffer(&self, target: GLenum, internal_format: GLenum, buffer: GLuint) {
         panic!();
     }
 
-    fn read_buffer(&self, mode: GLenum) {
+    pub fn read_buffer(&self, mode: GLenum) {
         panic!();
     }
 
-    fn read_pixels_into_buffer(
+    pub fn read_pixels_into_buffer(
         &self,
         x: GLint,
         y: GLint,
@@ -611,7 +614,7 @@ impl Gl for Context {
         }
     }
 
-    fn read_pixels(
+    pub fn read_pixels(
         &self,
         x: GLint,
         y: GLint,
@@ -640,7 +643,7 @@ impl Gl for Context {
         pixels
     }
 
-    unsafe fn read_pixels_into_pbo(
+    pub unsafe fn read_pixels_into_pbo(
         &self,
         x: GLint,
         y: GLint,
@@ -652,15 +655,15 @@ impl Gl for Context {
         ReadPixels(x, y, width, height, format, pixel_type, ptr::null_mut());
     }
 
-    fn sample_coverage(&self, value: GLclampf, invert: bool) {
+    pub fn sample_coverage(&self, value: GLclampf, invert: bool) {
         panic!();
     }
 
-    fn polygon_offset(&self, factor: GLfloat, units: GLfloat) {
+    pub fn polygon_offset(&self, factor: GLfloat, units: GLfloat) {
         panic!();
     }
 
-    fn pixel_store_i(&self, name: GLenum, param: GLint) {
+    pub fn pixel_store_i(&self, name: GLenum, param: GLint) {
         //panic!();
         debug!("pixel_store_i {:x} {}", name, param);
         unsafe {
@@ -668,7 +671,7 @@ impl Gl for Context {
         }
     }
 
-    fn gen_buffers(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_buffers(&self, n: GLsizei) -> Vec<GLuint> {
         //panic!();
         let mut result = vec![0 as GLuint; n as usize];
         unsafe {
@@ -677,7 +680,7 @@ impl Gl for Context {
         result
     }
 
-    fn gen_renderbuffers(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_renderbuffers(&self, n: GLsizei) -> Vec<GLuint> {
         debug!("gen_renderbuffers {}", n);
         //panic!();
         let mut result = vec![0 as GLuint; n as usize];
@@ -687,7 +690,7 @@ impl Gl for Context {
         result
     }
 
-    fn gen_framebuffers(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_framebuffers(&self, n: GLsizei) -> Vec<GLuint> {
         //panic!();
         debug!("gen_framebuffers {}", n);
         let mut result = vec![0 as GLuint; n as usize];
@@ -697,7 +700,7 @@ impl Gl for Context {
         result
     }
 
-    fn gen_textures(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_textures(&self, n: GLsizei) -> Vec<GLuint> {
         //panic!();
         let mut result = vec![0 as GLuint; n as usize];
         unsafe {
@@ -706,7 +709,7 @@ impl Gl for Context {
         result
     }
 
-    fn gen_vertex_arrays(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_vertex_arrays(&self, n: GLsizei) -> Vec<GLuint> {
         //panic!();
         let mut result = vec![0 as GLuint; n as usize];
         unsafe {
@@ -715,11 +718,11 @@ impl Gl for Context {
         result
     }
 
-    fn gen_vertex_arrays_apple(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_vertex_arrays_apple(&self, n: GLsizei) -> Vec<GLuint> {
         self.gen_vertex_arrays(n)
     }
 
-    fn gen_queries(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_queries(&self, n: GLsizei) -> Vec<GLuint> {
         let mut result = vec![0 as GLuint; n as usize];
         unsafe {
             GenQueries(n, result.as_mut_ptr());
@@ -727,38 +730,38 @@ impl Gl for Context {
         result
     }
 
-    fn begin_query(&self, target: GLenum, id: GLuint) {
+    pub fn begin_query(&self, target: GLenum, id: GLuint) {
         unsafe {
             BeginQuery(target, id);
         }
     }
 
-    fn end_query(&self, target: GLenum) {
+    pub fn end_query(&self, target: GLenum) {
         unsafe {
             EndQuery(target);
         }
     }
 
-    fn query_counter(&self, id: GLuint, target: GLenum) {
+    pub fn query_counter(&self, id: GLuint, target: GLenum) {
         panic!();
     }
 
-    fn get_query_object_iv(&self, id: GLuint, pname: GLenum) -> i32 {
-        panic!();
-        //0
-    }
-
-    fn get_query_object_uiv(&self, id: GLuint, pname: GLenum) -> u32 {
+    pub fn get_query_object_iv(&self, id: GLuint, pname: GLenum) -> i32 {
         panic!();
         //0
     }
 
-    fn get_query_object_i64v(&self, id: GLuint, pname: GLenum) -> i64 {
+    pub fn get_query_object_uiv(&self, id: GLuint, pname: GLenum) -> u32 {
         panic!();
         //0
     }
 
-    fn get_query_object_ui64v(&self, id: GLuint, pname: GLenum) -> u64 {
+    pub fn get_query_object_i64v(&self, id: GLuint, pname: GLenum) -> i64 {
+        panic!();
+        //0
+    }
+
+    pub fn get_query_object_ui64v(&self, id: GLuint, pname: GLenum) -> u64 {
         let mut result = 0;
         unsafe {
             GetQueryObjectui64v(id, pname, &mut result);
@@ -766,7 +769,7 @@ impl Gl for Context {
         result
     }
 
-    fn delete_queries(&self, queries: &[GLuint]) {
+    pub fn delete_queries(&self, queries: &[GLuint]) {
         unsafe {
             for q in queries {
                 DeleteQuery(*q);
@@ -774,7 +777,7 @@ impl Gl for Context {
         }
     }
 
-    fn delete_vertex_arrays(&self, vertex_arrays: &[GLuint]) {
+    pub fn delete_vertex_arrays(&self, vertex_arrays: &[GLuint]) {
         unsafe {
             for v in vertex_arrays {
                 DeleteVertexArray(*v);
@@ -782,11 +785,11 @@ impl Gl for Context {
         }
     }
 
-    fn delete_vertex_arrays_apple(&self, vertex_arrays: &[GLuint]) {
+    pub fn delete_vertex_arrays_apple(&self, vertex_arrays: &[GLuint]) {
         self.delete_vertex_arrays(vertex_arrays)
     }
 
-    fn delete_buffers(&self, buffers: &[GLuint]) {
+    pub fn delete_buffers(&self, buffers: &[GLuint]) {
         unsafe {
             for b in buffers {
                 DeleteBuffer(*b);
@@ -794,7 +797,7 @@ impl Gl for Context {
         }
     }
 
-    fn delete_renderbuffers(&self, renderbuffers: &[GLuint]) {
+    pub fn delete_renderbuffers(&self, renderbuffers: &[GLuint]) {
         unsafe {
             for r in renderbuffers {
                 DeleteRenderbuffer(*r);
@@ -802,7 +805,7 @@ impl Gl for Context {
         }
     }
 
-    fn delete_framebuffers(&self, framebuffers: &[GLuint]) {
+    pub fn delete_framebuffers(&self, framebuffers: &[GLuint]) {
         unsafe {
             for f in framebuffers {
                 DeleteFramebuffer(*f);
@@ -810,7 +813,7 @@ impl Gl for Context {
         }
     }
 
-    fn delete_textures(&self, textures: &[GLuint]) {
+    pub fn delete_textures(&self, textures: &[GLuint]) {
         unsafe {
             for t in textures {
                 DeleteTexture(*t);
@@ -818,7 +821,7 @@ impl Gl for Context {
         }
     }
 
-    fn framebuffer_renderbuffer(
+    pub fn framebuffer_renderbuffer(
         &self,
         target: GLenum,
         attachment: GLenum,
@@ -835,7 +838,7 @@ impl Gl for Context {
         }
     }
 
-    fn renderbuffer_storage(
+    pub fn renderbuffer_storage(
         &self,
         target: GLenum,
         internalformat: GLenum,
@@ -852,7 +855,7 @@ impl Gl for Context {
         }
     }
 
-    fn depth_func(&self, func: GLenum) {
+    pub fn depth_func(&self, func: GLenum) {
         debug!("depth_func {}", func);
         //panic!();
         unsafe {
@@ -860,14 +863,14 @@ impl Gl for Context {
         }
     }
 
-    fn active_texture(&self, texture: GLenum) {
+    pub fn active_texture(&self, texture: GLenum) {
         //panic!();
         unsafe {
             ActiveTexture(texture);
         }
     }
 
-    fn attach_shader(&self, program: GLuint, shader: GLuint) {
+    pub fn attach_shader(&self, program: GLuint, shader: GLuint) {
         debug!("attach shader {} {}", program, shader);
         //panic!();
         unsafe {
@@ -875,7 +878,7 @@ impl Gl for Context {
         }
     }
 
-    fn bind_attrib_location(&self, program: GLuint, index: GLuint, name: &str) {
+    pub fn bind_attrib_location(&self, program: GLuint, index: GLuint, name: &str) {
         debug!("bind_attrib_location {} {} {}", program, index, name);
         //panic!();
         let c_string = CString::new(name).unwrap();
@@ -883,32 +886,32 @@ impl Gl for Context {
     }
 
     // https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glGetUniform.xml
-    unsafe fn get_uniform_iv(&self, program: GLuint, location: GLint, result: &mut [GLint]) {
+    pub unsafe fn get_uniform_iv(&self, program: GLuint, location: GLint, result: &mut [GLint]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
     // https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glGetUniform.xml
-    unsafe fn get_uniform_fv(&self, program: GLuint, location: GLint, result: &mut [GLfloat]) {
+    pub unsafe fn get_uniform_fv(&self, program: GLuint, location: GLint, result: &mut [GLfloat]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
-    fn get_uniform_block_index(&self, program: GLuint, name: &str) -> GLuint {
+    pub fn get_uniform_block_index(&self, program: GLuint, name: &str) -> GLuint {
         panic!();
         //0
     }
 
-    fn get_uniform_indices(&self, program: GLuint, names: &[&str]) -> Vec<GLuint> {
+    pub fn get_uniform_indices(&self, program: GLuint, names: &[&str]) -> Vec<GLuint> {
         panic!();
         //Vec::new()
     }
 
-    fn bind_buffer_base(&self, target: GLenum, index: GLuint, buffer: GLuint) {
+    pub fn bind_buffer_base(&self, target: GLenum, index: GLuint, buffer: GLuint) {
         panic!();
     }
 
-    fn bind_buffer_range(
+    pub fn bind_buffer_range(
         &self,
         target: GLenum,
         index: GLuint,
@@ -919,7 +922,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn uniform_block_binding(
+    pub fn uniform_block_binding(
         &self,
         program: GLuint,
         uniform_block_index: GLuint,
@@ -928,25 +931,25 @@ impl Gl for Context {
         panic!();
     }
 
-    fn bind_buffer(&self, target: GLenum, buffer: GLuint) {
+    pub fn bind_buffer(&self, target: GLenum, buffer: GLuint) {
         //panic!();
         unsafe {
             BindBuffer(target, buffer);
         }
     }
 
-    fn bind_vertex_array(&self, vao: GLuint) {
+    pub fn bind_vertex_array(&self, vao: GLuint) {
         //panic!();
         unsafe {
             BindVertexArray(vao);
         }
     }
 
-    fn bind_vertex_array_apple(&self, vao: GLuint) {
+    pub fn bind_vertex_array_apple(&self, vao: GLuint) {
         self.bind_vertex_array(vao)
     }
 
-    fn bind_renderbuffer(&self, target: GLenum, renderbuffer: GLuint) {
+    pub fn bind_renderbuffer(&self, target: GLenum, renderbuffer: GLuint) {
         debug!("bind_renderbuffer {} {}", target, renderbuffer);
         //panic!();
         unsafe {
@@ -954,7 +957,7 @@ impl Gl for Context {
         }
     }
 
-    fn bind_framebuffer(&self, target: GLenum, framebuffer: GLuint) {
+    pub fn bind_framebuffer(&self, target: GLenum, framebuffer: GLuint) {
         debug!("bind_framebuffer {} {}", target, framebuffer);
         //panic!();
         unsafe {
@@ -962,20 +965,20 @@ impl Gl for Context {
         }
     }
 
-    fn bind_texture(&self, target: GLenum, texture: GLuint) {
+    pub fn bind_texture(&self, target: GLenum, texture: GLuint) {
         //panic!();
         unsafe {
             BindTexture(target, texture);
         }
     }
 
-    fn draw_buffers(&self, bufs: &[GLenum]) {
+    pub fn draw_buffers(&self, bufs: &[GLenum]) {
         panic!();
         //unsafe {}
     }
 
     // FIXME: Does not verify buffer size -- unsafe!
-    fn tex_image_2d(
+    pub fn tex_image_2d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1006,7 +1009,7 @@ impl Gl for Context {
         }
     }
 
-    fn compressed_tex_image_2d(
+    pub fn compressed_tex_image_2d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1019,7 +1022,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn compressed_tex_sub_image_2d(
+    pub fn compressed_tex_sub_image_2d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1033,7 +1036,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn tex_image_3d(
+    pub fn tex_image_3d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1049,7 +1052,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn copy_tex_image_2d(
+    pub fn copy_tex_image_2d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1063,7 +1066,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn copy_tex_sub_image_2d(
+    pub fn copy_tex_sub_image_2d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1079,7 +1082,7 @@ impl Gl for Context {
         }
     }
 
-    fn copy_tex_sub_image_3d(
+    pub fn copy_tex_sub_image_3d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1094,7 +1097,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn tex_sub_image_2d(
+    pub fn tex_sub_image_2d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1126,7 +1129,7 @@ impl Gl for Context {
         }
     }
 
-    fn tex_sub_image_2d_pbo(
+    pub fn tex_sub_image_2d_pbo(
         &self,
         target: GLenum,
         level: GLint,
@@ -1158,7 +1161,7 @@ impl Gl for Context {
         }
     }
 
-    fn tex_sub_image_3d(
+    pub fn tex_sub_image_3d(
         &self,
         target: GLenum,
         level: GLint,
@@ -1176,7 +1179,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn tex_sub_image_3d_pbo(
+    pub fn tex_sub_image_3d_pbo(
         &self,
         target: GLenum,
         level: GLint,
@@ -1193,7 +1196,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn tex_storage_2d(
+    pub fn tex_storage_2d(
         &self,
         target: GLenum,
         levels: GLint,
@@ -1207,7 +1210,7 @@ impl Gl for Context {
         }
     }
 
-    fn tex_storage_3d(
+    pub fn tex_storage_3d(
         &self,
         target: GLenum,
         levels: GLint,
@@ -1219,7 +1222,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn get_tex_image_into_buffer(
+    pub fn get_tex_image_into_buffer(
         &self,
         target: GLenum,
         level: GLint,
@@ -1230,7 +1233,7 @@ impl Gl for Context {
         panic!();
     }
 
-    unsafe fn copy_image_sub_data(
+    pub unsafe fn copy_image_sub_data(
         &self,
         src_name: GLuint,
         src_target: GLenum,
@@ -1254,13 +1257,13 @@ impl Gl for Context {
         );
     }
 
-    fn invalidate_framebuffer(&self, target: GLenum, attachments: &[GLenum]) {
+    pub fn invalidate_framebuffer(&self, target: GLenum, attachments: &[GLenum]) {
         unsafe {
             InvalidateFramebuffer(target, attachments.len() as GLsizei, attachments.as_ptr());
         }
     }
 
-    fn invalidate_sub_framebuffer(
+    pub fn invalidate_sub_framebuffer(
         &self,
         target: GLenum,
         attachments: &[GLenum],
@@ -1272,32 +1275,32 @@ impl Gl for Context {
     }
 
     #[inline]
-    unsafe fn get_integer_v(&self, name: GLenum, result: &mut [GLint]) {
+    pub unsafe fn get_integer_v(&self, name: GLenum, result: &mut [GLint]) {
         //panic!();
         assert!(!result.is_empty());
         GetIntegerv(name, result.as_mut_ptr());
     }
 
     #[inline]
-    unsafe fn get_integer_64v(&self, name: GLenum, result: &mut [GLint64]) {
+    pub unsafe fn get_integer_64v(&self, name: GLenum, result: &mut [GLint64]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
     #[inline]
-    unsafe fn get_integer_iv(&self, name: GLenum, index: GLuint, result: &mut [GLint]) {
+    pub unsafe fn get_integer_iv(&self, name: GLenum, index: GLuint, result: &mut [GLint]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
     #[inline]
-    unsafe fn get_integer_64iv(&self, name: GLenum, index: GLuint, result: &mut [GLint64]) {
+    pub unsafe fn get_integer_64iv(&self, name: GLenum, index: GLuint, result: &mut [GLint64]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
     #[inline]
-    unsafe fn get_boolean_v(&self, name: GLenum, result: &mut [GLboolean]) {
+    pub unsafe fn get_boolean_v(&self, name: GLenum, result: &mut [GLboolean]) {
         debug!("get_boolean_v {}", name);
         //panic!();
         assert!(!result.is_empty());
@@ -1305,12 +1308,12 @@ impl Gl for Context {
     }
 
     #[inline]
-    unsafe fn get_float_v(&self, name: GLenum, result: &mut [GLfloat]) {
+    pub unsafe fn get_float_v(&self, name: GLenum, result: &mut [GLfloat]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
-    fn get_framebuffer_attachment_parameter_iv(
+    pub fn get_framebuffer_attachment_parameter_iv(
         &self,
         target: GLenum,
         attachment: GLenum,
@@ -1320,33 +1323,33 @@ impl Gl for Context {
         //0
     }
 
-    fn get_renderbuffer_parameter_iv(&self, target: GLenum, pname: GLenum) -> GLint {
+    pub fn get_renderbuffer_parameter_iv(&self, target: GLenum, pname: GLenum) -> GLint {
         panic!();
         //0
     }
 
-    fn get_tex_parameter_iv(&self, target: GLenum, pname: GLenum) -> GLint {
+    pub fn get_tex_parameter_iv(&self, target: GLenum, pname: GLenum) -> GLint {
         panic!();
         //0
     }
 
-    fn get_tex_parameter_fv(&self, target: GLenum, pname: GLenum) -> GLfloat {
+    pub fn get_tex_parameter_fv(&self, target: GLenum, pname: GLenum) -> GLfloat {
         panic!();
         //0.0
     }
 
-    fn tex_parameter_i(&self, target: GLenum, pname: GLenum, param: GLint) {
+    pub fn tex_parameter_i(&self, target: GLenum, pname: GLenum, param: GLint) {
         //panic!();
         unsafe {
             TexParameteri(target, pname, param);
         }
     }
 
-    fn tex_parameter_f(&self, target: GLenum, pname: GLenum, param: GLfloat) {
+    pub fn tex_parameter_f(&self, target: GLenum, pname: GLenum, param: GLfloat) {
         panic!();
     }
 
-    fn framebuffer_texture_2d(
+    pub fn framebuffer_texture_2d(
         &self,
         target: GLenum,
         attachment: GLenum,
@@ -1364,7 +1367,7 @@ impl Gl for Context {
         }
     }
 
-    fn framebuffer_texture_layer(
+    pub fn framebuffer_texture_layer(
         &self,
         target: GLenum,
         attachment: GLenum,
@@ -1379,7 +1382,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn blit_framebuffer(
+    pub fn blit_framebuffer(
         &self,
         src_x0: GLint,
         src_y0: GLint,
@@ -1399,11 +1402,11 @@ impl Gl for Context {
         }
     }
 
-    fn vertex_attrib_4f(&self, index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat) {
+    pub fn vertex_attrib_4f(&self, index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat) {
         panic!();
     }
 
-    fn vertex_attrib_pointer_f32(
+    pub fn vertex_attrib_pointer_f32(
         &self,
         index: GLuint,
         size: GLint,
@@ -1414,7 +1417,7 @@ impl Gl for Context {
         panic!();
     }
 
-    fn vertex_attrib_pointer(
+    pub fn vertex_attrib_pointer(
         &self,
         index: GLuint,
         size: GLint,
@@ -1440,7 +1443,7 @@ impl Gl for Context {
         }
     }
 
-    fn vertex_attrib_i_pointer(
+    pub fn vertex_attrib_i_pointer(
         &self,
         index: GLuint,
         size: GLint,
@@ -1458,7 +1461,7 @@ impl Gl for Context {
         }
     }
 
-    fn vertex_attrib_divisor(&self, index: GLuint, divisor: GLuint) {
+    pub fn vertex_attrib_divisor(&self, index: GLuint, divisor: GLuint) {
         debug!("vertex_attrib_divisor {} {}", index, divisor);
         //assert!(index == 0 && divisor == 0);
         //panic!();
@@ -1467,7 +1470,7 @@ impl Gl for Context {
         }
     }
 
-    fn viewport(&self, x: GLint, y: GLint, width: GLsizei, height: GLsizei) {
+    pub fn viewport(&self, x: GLint, y: GLint, width: GLsizei, height: GLsizei) {
         debug!("viewport {} {} {} {}", x, y, width, height);
         //panic!();
         unsafe {
@@ -1475,35 +1478,35 @@ impl Gl for Context {
         }
     }
 
-    fn scissor(&self, x: GLint, y: GLint, width: GLsizei, height: GLsizei) {
+    pub fn scissor(&self, x: GLint, y: GLint, width: GLsizei, height: GLsizei) {
         //panic!();
         unsafe {
             SetScissor(x, y, width, height);
         }
     }
 
-    fn line_width(&self, width: GLfloat) {
+    pub fn line_width(&self, width: GLfloat) {
         panic!();
     }
 
-    fn use_program(&self, program: GLuint) {
+    pub fn use_program(&self, program: GLuint) {
         //panic!();
         unsafe {
             UseProgram(program);
         }
     }
 
-    fn validate_program(&self, program: GLuint) {
+    pub fn validate_program(&self, program: GLuint) {
         panic!();
     }
 
-    fn draw_arrays(&self, mode: GLenum, first: GLint, count: GLsizei) {
+    pub fn draw_arrays(&self, mode: GLenum, first: GLint, count: GLsizei) {
         unsafe {
             DrawElementsInstanced(mode, count, NONE, first as GLintptr, 1);
         }
     }
 
-    fn draw_arrays_instanced(
+    pub fn draw_arrays_instanced(
         &self,
         mode: GLenum,
         first: GLint,
@@ -1515,7 +1518,7 @@ impl Gl for Context {
         }
     }
 
-    fn draw_elements(
+    pub fn draw_elements(
         &self,
         mode: GLenum,
         count: GLsizei,
@@ -1532,7 +1535,7 @@ impl Gl for Context {
         }
     }
 
-    fn draw_elements_instanced(
+    pub fn draw_elements_instanced(
         &self,
         mode: GLenum,
         count: GLsizei,
@@ -1556,19 +1559,19 @@ impl Gl for Context {
         }
     }
 
-    fn blend_color(&self, r: f32, g: f32, b: f32, a: f32) {
+    pub fn blend_color(&self, r: f32, g: f32, b: f32, a: f32) {
         unsafe {
             BlendColor(r, g, b, a);
         }
     }
 
-    fn blend_func(&self, sfactor: GLenum, dfactor: GLenum) {
+    pub fn blend_func(&self, sfactor: GLenum, dfactor: GLenum) {
         unsafe {
             BlendFunc(sfactor, dfactor, sfactor, dfactor);
         }
     }
 
-    fn blend_func_separate(
+    pub fn blend_func_separate(
         &self,
         src_rgb: GLenum,
         dest_rgb: GLenum,
@@ -1580,29 +1583,29 @@ impl Gl for Context {
         }
     }
 
-    fn blend_equation(&self, mode: GLenum) {
+    pub fn blend_equation(&self, mode: GLenum) {
         unsafe {
             BlendEquation(mode);
         }
     }
 
-    fn blend_equation_separate(&self, mode_rgb: GLenum, mode_alpha: GLenum) {
+    pub fn blend_equation_separate(&self, mode_rgb: GLenum, mode_alpha: GLenum) {
         panic!();
     }
 
-    fn color_mask(&self, r: bool, g: bool, b: bool, a: bool) {
+    pub fn color_mask(&self, r: bool, g: bool, b: bool, a: bool) {
         panic!();
     }
 
-    fn cull_face(&self, mode: GLenum) {
+    pub fn cull_face(&self, mode: GLenum) {
         panic!();
     }
 
-    fn front_face(&self, mode: GLenum) {
+    pub fn front_face(&self, mode: GLenum) {
         panic!();
     }
 
-    fn enable(&self, cap: GLenum) {
+    pub fn enable(&self, cap: GLenum) {
         debug!("enable {}", cap);
         //panic!();
         unsafe {
@@ -1610,7 +1613,7 @@ impl Gl for Context {
         }
     }
 
-    fn disable(&self, cap: GLenum) {
+    pub fn disable(&self, cap: GLenum) {
         debug!("disable {}", cap);
         //panic!();
         unsafe {
@@ -1618,42 +1621,42 @@ impl Gl for Context {
         }
     }
 
-    fn hint(&self, param_name: GLenum, param_val: GLenum) {
+    pub fn hint(&self, param_name: GLenum, param_val: GLenum) {
         panic!();
     }
 
-    fn is_enabled(&self, cap: GLenum) -> GLboolean {
-        panic!();
-        //0
-    }
-
-    fn is_shader(&self, shader: GLuint) -> GLboolean {
+    pub fn is_enabled(&self, cap: GLenum) -> GLboolean {
         panic!();
         //0
     }
 
-    fn is_texture(&self, texture: GLenum) -> GLboolean {
+    pub fn is_shader(&self, shader: GLuint) -> GLboolean {
         panic!();
         //0
     }
 
-    fn is_framebuffer(&self, framebuffer: GLenum) -> GLboolean {
+    pub fn is_texture(&self, texture: GLenum) -> GLboolean {
         panic!();
         //0
     }
 
-    fn is_renderbuffer(&self, renderbuffer: GLenum) -> GLboolean {
+    pub fn is_framebuffer(&self, framebuffer: GLenum) -> GLboolean {
         panic!();
         //0
     }
 
-    fn check_frame_buffer_status(&self, target: GLenum) -> GLenum {
+    pub fn is_renderbuffer(&self, renderbuffer: GLenum) -> GLboolean {
+        panic!();
+        //0
+    }
+
+    pub fn check_frame_buffer_status(&self, target: GLenum) -> GLenum {
         debug!("check_frame_buffer_status {}", target);
         //panic!();
         unsafe { CheckFramebufferStatus(target) }
     }
 
-    fn enable_vertex_attrib_array(&self, index: GLuint) {
+    pub fn enable_vertex_attrib_array(&self, index: GLuint) {
         //panic!();
         debug!("enable_vertex_attrib_array {}", index);
         unsafe {
@@ -1662,19 +1665,19 @@ impl Gl for Context {
         }
     }
 
-    fn disable_vertex_attrib_array(&self, index: GLuint) {
+    pub fn disable_vertex_attrib_array(&self, index: GLuint) {
         panic!();
     }
 
-    fn uniform_1f(&self, location: GLint, v0: GLfloat) {
+    pub fn uniform_1f(&self, location: GLint, v0: GLfloat) {
         panic!();
     }
 
-    fn uniform_1fv(&self, location: GLint, values: &[f32]) {
+    pub fn uniform_1fv(&self, location: GLint, values: &[f32]) {
         panic!();
     }
 
-    fn uniform_1i(&self, location: GLint, v0: GLint) {
+    pub fn uniform_1i(&self, location: GLint, v0: GLint) {
         debug!("uniform_1i {} {}", location, v0);
         //panic!();
         unsafe {
@@ -1682,85 +1685,85 @@ impl Gl for Context {
         }
     }
 
-    fn uniform_1iv(&self, location: GLint, values: &[i32]) {
+    pub fn uniform_1iv(&self, location: GLint, values: &[i32]) {
         panic!();
     }
 
-    fn uniform_1ui(&self, location: GLint, v0: GLuint) {
+    pub fn uniform_1ui(&self, location: GLint, v0: GLuint) {
         panic!();
     }
 
-    fn uniform_2f(&self, location: GLint, v0: GLfloat, v1: GLfloat) {
+    pub fn uniform_2f(&self, location: GLint, v0: GLfloat, v1: GLfloat) {
         panic!();
     }
 
-    fn uniform_2fv(&self, location: GLint, values: &[f32]) {
+    pub fn uniform_2fv(&self, location: GLint, values: &[f32]) {
         panic!();
     }
 
-    fn uniform_2i(&self, location: GLint, v0: GLint, v1: GLint) {
+    pub fn uniform_2i(&self, location: GLint, v0: GLint, v1: GLint) {
         panic!();
     }
 
-    fn uniform_2iv(&self, location: GLint, values: &[i32]) {
+    pub fn uniform_2iv(&self, location: GLint, values: &[i32]) {
         panic!();
     }
 
-    fn uniform_2ui(&self, location: GLint, v0: GLuint, v1: GLuint) {
+    pub fn uniform_2ui(&self, location: GLint, v0: GLuint, v1: GLuint) {
         panic!();
     }
 
-    fn uniform_3f(&self, location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat) {
+    pub fn uniform_3f(&self, location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat) {
         panic!();
     }
 
-    fn uniform_3fv(&self, location: GLint, values: &[f32]) {
+    pub fn uniform_3fv(&self, location: GLint, values: &[f32]) {
         panic!();
     }
 
-    fn uniform_3i(&self, location: GLint, v0: GLint, v1: GLint, v2: GLint) {
+    pub fn uniform_3i(&self, location: GLint, v0: GLint, v1: GLint, v2: GLint) {
         panic!();
     }
 
-    fn uniform_3iv(&self, location: GLint, values: &[i32]) {
+    pub fn uniform_3iv(&self, location: GLint, values: &[i32]) {
         panic!();
     }
 
-    fn uniform_3ui(&self, location: GLint, v0: GLuint, v1: GLuint, v2: GLuint) {
+    pub fn uniform_3ui(&self, location: GLint, v0: GLuint, v1: GLuint, v2: GLuint) {
         panic!();
     }
 
-    fn uniform_4f(&self, location: GLint, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat) {
+    pub fn uniform_4f(&self, location: GLint, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat) {
         panic!();
     }
 
-    fn uniform_4i(&self, location: GLint, x: GLint, y: GLint, z: GLint, w: GLint) {
+    pub fn uniform_4i(&self, location: GLint, x: GLint, y: GLint, z: GLint, w: GLint) {
         panic!();
     }
 
-    fn uniform_4iv(&self, location: GLint, values: &[i32]) {
+    pub fn uniform_4iv(&self, location: GLint, values: &[i32]) {
         panic!();
     }
 
-    fn uniform_4ui(&self, location: GLint, x: GLuint, y: GLuint, z: GLuint, w: GLuint) {
+    pub fn uniform_4ui(&self, location: GLint, x: GLuint, y: GLuint, z: GLuint, w: GLuint) {
         panic!();
     }
 
-    fn uniform_4fv(&self, location: GLint, values: &[f32]) {
+    pub fn uniform_4fv(&self, location: GLint, values: &[f32]) {
         unsafe {
             Uniform4fv(location, (values.len() / 4) as GLsizei, values.as_ptr());
         }
     }
 
-    fn uniform_matrix_2fv(&self, location: GLint, transpose: bool, value: &[f32]) {
+    pub fn uniform_matrix_2fv(&self, location: GLint, transpose: bool, value: &[f32]) {
         panic!();
     }
 
-    fn uniform_matrix_3fv(&self, location: GLint, transpose: bool, value: &[f32]) {
+    pub fn uniform_matrix_3fv(&self, location: GLint, transpose: bool, value: &[f32]) {
         panic!();
     }
 
-    fn uniform_matrix_4fv(&self, location: GLint, transpose: bool, value: &[f32]) {
+    pub fn uniform_matrix_4fv(&self, location: GLint, transpose: bool, value: &[f32]) {
         debug!("uniform_matrix_4fv {} {} {:?}", location, transpose, value);
         //panic!();
         unsafe {
@@ -1773,7 +1776,7 @@ impl Gl for Context {
         }
     }
 
-    fn depth_mask(&self, flag: bool) {
+    pub fn depth_mask(&self, flag: bool) {
         debug!("depth_mask {}", flag);
         //panic!();
         unsafe {
@@ -1781,21 +1784,21 @@ impl Gl for Context {
         }
     }
 
-    fn depth_range(&self, near: f64, far: f64) {
+    pub fn depth_range(&self, near: f64, far: f64) {
         panic!();
     }
 
-    fn get_active_attrib(&self, program: GLuint, index: GLuint) -> (i32, u32, String) {
-        panic!();
-        //(0, 0, String::new())
-    }
-
-    fn get_active_uniform(&self, program: GLuint, index: GLuint) -> (i32, u32, String) {
+    pub fn get_active_attrib(&self, program: GLuint, index: GLuint) -> (i32, u32, String) {
         panic!();
         //(0, 0, String::new())
     }
 
-    fn get_active_uniforms_iv(
+    pub fn get_active_uniform(&self, program: GLuint, index: GLuint) -> (i32, u32, String) {
+        panic!();
+        //(0, 0, String::new())
+    }
+
+    pub fn get_active_uniforms_iv(
         &self,
         program: GLuint,
         indices: Vec<GLuint>,
@@ -1805,12 +1808,12 @@ impl Gl for Context {
         //Vec::new()
     }
 
-    fn get_active_uniform_block_i(&self, program: GLuint, index: GLuint, pname: GLenum) -> GLint {
+    pub fn get_active_uniform_block_i(&self, program: GLuint, index: GLuint, pname: GLenum) -> GLint {
         panic!();
         //0
     }
 
-    fn get_active_uniform_block_iv(
+    pub fn get_active_uniform_block_iv(
         &self,
         program: GLuint,
         index: GLuint,
@@ -1820,35 +1823,35 @@ impl Gl for Context {
         //Vec::new()
     }
 
-    fn get_active_uniform_block_name(&self, program: GLuint, index: GLuint) -> String {
+    pub fn get_active_uniform_block_name(&self, program: GLuint, index: GLuint) -> String {
         panic!();
         //String::new()
     }
 
-    fn get_attrib_location(&self, program: GLuint, name: &str) -> c_int {
+    pub fn get_attrib_location(&self, program: GLuint, name: &str) -> c_int {
         let name = CString::new(name).unwrap();
         unsafe { GetAttribLocation(program, name.as_ptr()) }
     }
 
-    fn get_frag_data_location(&self, program: GLuint, name: &str) -> c_int {
+    pub fn get_frag_data_location(&self, program: GLuint, name: &str) -> c_int {
         panic!();
         //0
     }
 
-    fn get_uniform_location(&self, program: GLuint, name: &str) -> c_int {
+    pub fn get_uniform_location(&self, program: GLuint, name: &str) -> c_int {
         debug!("get_uniform_location {} {}", program, name);
         //panic!();
         let name = CString::new(name).unwrap();
         unsafe { GetUniformLocation(program, name.as_ptr()) }
     }
 
-    fn get_program_info_log(&self, program: GLuint) -> String {
+    pub fn get_program_info_log(&self, program: GLuint) -> String {
         debug!("get_program_info_log {}", program);
         String::new()
     }
 
     #[inline]
-    unsafe fn get_program_iv(&self, program: GLuint, pname: GLenum, result: &mut [GLint]) {
+    pub unsafe fn get_program_iv(&self, program: GLuint, pname: GLenum, result: &mut [GLint]) {
         debug!("get_program_iv {}", pname);
         //panic!();
         assert!(!result.is_empty());
@@ -1858,48 +1861,48 @@ impl Gl for Context {
         }
     }
 
-    fn get_program_binary(&self, program: GLuint) -> (Vec<u8>, GLenum) {
+    pub fn get_program_binary(&self, program: GLuint) -> (Vec<u8>, GLenum) {
         panic!();
         //(Vec::new(), NONE)
     }
 
-    fn program_binary(&self, program: GLuint, format: GLenum, binary: &[u8]) {
+    pub fn program_binary(&self, program: GLuint, format: GLenum, binary: &[u8]) {
         panic!();
     }
 
-    fn program_parameter_i(&self, program: GLuint, pname: GLenum, value: GLint) {
+    pub fn program_parameter_i(&self, program: GLuint, pname: GLenum, value: GLint) {
         panic!();
     }
 
     #[inline]
-    unsafe fn get_vertex_attrib_iv(&self, index: GLuint, pname: GLenum, result: &mut [GLint]) {
+    pub unsafe fn get_vertex_attrib_iv(&self, index: GLuint, pname: GLenum, result: &mut [GLint]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
     #[inline]
-    unsafe fn get_vertex_attrib_fv(&self, index: GLuint, pname: GLenum, result: &mut [GLfloat]) {
+    pub unsafe fn get_vertex_attrib_fv(&self, index: GLuint, pname: GLenum, result: &mut [GLfloat]) {
         panic!();
         //assert!(!result.is_empty());
     }
 
-    fn get_vertex_attrib_pointer_v(&self, index: GLuint, pname: GLenum) -> GLsizeiptr {
+    pub fn get_vertex_attrib_pointer_v(&self, index: GLuint, pname: GLenum) -> GLsizeiptr {
         panic!();
         //0
     }
 
-    fn get_buffer_parameter_iv(&self, target: GLuint, pname: GLenum) -> GLint {
+    pub fn get_buffer_parameter_iv(&self, target: GLuint, pname: GLenum) -> GLint {
         panic!();
         //0
     }
 
-    fn get_shader_info_log(&self, shader: GLuint) -> String {
+    pub fn get_shader_info_log(&self, shader: GLuint) -> String {
         debug!("get_shader_info_log {}", shader);
         //panic!();
         String::new()
     }
 
-    fn get_string(&self, which: GLenum) -> String {
+    pub fn get_string(&self, which: GLenum) -> String {
         // panic!();
         unsafe {
             let llstr = GetString(which);
@@ -1911,7 +1914,7 @@ impl Gl for Context {
         }
     }
 
-    fn get_string_i(&self, which: GLenum, index: GLuint) -> String {
+    pub fn get_string_i(&self, which: GLenum, index: GLuint) -> String {
         //panic!();
         unsafe {
             let llstr = GetStringi(which, index);
@@ -1923,7 +1926,7 @@ impl Gl for Context {
         }
     }
 
-    unsafe fn get_shader_iv(&self, shader: GLuint, pname: GLenum, result: &mut [GLint]) {
+    pub unsafe fn get_shader_iv(&self, shader: GLuint, pname: GLenum, result: &mut [GLint]) {
         debug!("get_shader_iv");
         //panic!();
         assert!(!result.is_empty());
@@ -1934,7 +1937,7 @@ impl Gl for Context {
         }
     }
 
-    fn get_shader_precision_format(
+    pub fn get_shader_precision_format(
         &self,
         _shader_type: GLuint,
         precision_type: GLuint,
@@ -1958,30 +1961,30 @@ impl Gl for Context {
         }
     }
 
-    fn compile_shader(&self, shader: GLuint) {
+    pub fn compile_shader(&self, shader: GLuint) {
         debug!("compile_shader {}", shader);
         //panic!();
     }
 
-    fn create_program(&self) -> GLuint {
+    pub fn create_program(&self) -> GLuint {
         debug!("create_program");
         //panic!();
         unsafe { CreateProgram() }
     }
 
-    fn delete_program(&self, program: GLuint) {
+    pub fn delete_program(&self, program: GLuint) {
         unsafe {
             DeleteProgram(program);
         }
     }
 
-    fn create_shader(&self, shader_type: GLenum) -> GLuint {
+    pub fn create_shader(&self, shader_type: GLenum) -> GLuint {
         debug!("create_shader {}", shader_type);
         //panic!();
         unsafe { CreateShader(shader_type) }
     }
 
-    fn delete_shader(&self, shader: GLuint) {
+    pub fn delete_shader(&self, shader: GLuint) {
         debug!("delete_shader {}", shader);
         //panic!();
         unsafe {
@@ -1989,12 +1992,12 @@ impl Gl for Context {
         }
     }
 
-    fn detach_shader(&self, program: GLuint, shader: GLuint) {
+    pub fn detach_shader(&self, program: GLuint, shader: GLuint) {
         debug!("detach_shader {} {}", program, shader);
         //panic!();
     }
 
-    fn link_program(&self, program: GLuint) {
+    pub fn link_program(&self, program: GLuint) {
         debug!("link_program {}", program);
         //panic!();
         unsafe {
@@ -2002,14 +2005,14 @@ impl Gl for Context {
         }
     }
 
-    fn clear_color(&self, r: f32, g: f32, b: f32, a: f32) {
+    pub fn clear_color(&self, r: f32, g: f32, b: f32, a: f32) {
         //panic!();
         unsafe {
             ClearColor(r, g, b, a);
         }
     }
 
-    fn clear(&self, buffer_mask: GLbitfield) {
+    pub fn clear(&self, buffer_mask: GLbitfield) {
         debug!("clear {}", buffer_mask);
         //panic!();
         unsafe {
@@ -2017,7 +2020,7 @@ impl Gl for Context {
         }
     }
 
-    fn clear_depth(&self, depth: f64) {
+    pub fn clear_depth(&self, depth: f64) {
         debug!("clear_depth {}", depth);
         //panic!();
         unsafe {
@@ -2025,76 +2028,76 @@ impl Gl for Context {
         }
     }
 
-    fn clear_stencil(&self, s: GLint) {
+    pub fn clear_stencil(&self, s: GLint) {
         panic!();
     }
 
-    fn flush(&self) {}
+    pub fn flush(&self) {}
 
-    fn finish(&self) {
+    pub fn finish(&self) {
         unsafe {
             Finish();
         }
     }
 
-    fn get_error(&self) -> GLenum {
+    pub fn get_error(&self) -> GLenum {
         //panic!();
         unsafe { GetError() }
     }
 
-    fn stencil_mask(&self, mask: GLuint) {
+    pub fn stencil_mask(&self, mask: GLuint) {
         panic!();
     }
 
-    fn stencil_mask_separate(&self, face: GLenum, mask: GLuint) {
+    pub fn stencil_mask_separate(&self, face: GLenum, mask: GLuint) {
         panic!();
     }
 
-    fn stencil_func(&self, func: GLenum, ref_: GLint, mask: GLuint) {
+    pub fn stencil_func(&self, func: GLenum, ref_: GLint, mask: GLuint) {
         panic!();
     }
 
-    fn stencil_func_separate(&self, face: GLenum, func: GLenum, ref_: GLint, mask: GLuint) {
+    pub fn stencil_func_separate(&self, face: GLenum, func: GLenum, ref_: GLint, mask: GLuint) {
         panic!();
     }
 
-    fn stencil_op(&self, sfail: GLenum, dpfail: GLenum, dppass: GLenum) {
+    pub fn stencil_op(&self, sfail: GLenum, dpfail: GLenum, dppass: GLenum) {
         panic!();
     }
 
-    fn stencil_op_separate(&self, face: GLenum, sfail: GLenum, dpfail: GLenum, dppass: GLenum) {
+    pub fn stencil_op_separate(&self, face: GLenum, sfail: GLenum, dpfail: GLenum, dppass: GLenum) {
         panic!();
     }
 
-    fn egl_image_target_texture2d_oes(&self, target: GLenum, image: GLeglImageOES) {
+    pub fn egl_image_target_texture2d_oes(&self, target: GLenum, image: GLeglImageOES) {
         panic!("not supported")
     }
 
-    fn egl_image_target_renderbuffer_storage_oes(&self, target: GLenum, image: GLeglImageOES) {
+    pub fn egl_image_target_renderbuffer_storage_oes(&self, target: GLenum, image: GLeglImageOES) {
         panic!("not supported")
     }
 
-    fn generate_mipmap(&self, target: GLenum) {
+    pub fn generate_mipmap(&self, target: GLenum) {
         unsafe {
             GenerateMipmap(target);
         }
     }
 
-    fn insert_event_marker_ext(&self, message: &str) {
+    pub fn insert_event_marker_ext(&self, message: &str) {
         panic!();
     }
 
-    fn push_group_marker_ext(&self, message: &str) {
+    pub fn push_group_marker_ext(&self, message: &str) {
         debug!("push group {}", message);
         panic!();
     }
 
-    fn pop_group_marker_ext(&self) {
+    pub fn pop_group_marker_ext(&self) {
         debug!("pop group");
         panic!();
     }
 
-    fn debug_message_insert_khr(
+    pub fn debug_message_insert_khr(
         &self,
         source: GLenum,
         type_: GLenum,
@@ -2105,67 +2108,67 @@ impl Gl for Context {
         panic!();
     }
 
-    fn push_debug_group_khr(&self, source: GLenum, id: GLuint, message: &str) {
+    pub fn push_debug_group_khr(&self, source: GLenum, id: GLuint, message: &str) {
         panic!();
     }
 
-    fn pop_debug_group_khr(&self) {
+    pub fn pop_debug_group_khr(&self) {
         panic!();
     }
 
-    fn fence_sync(&self, condition: GLenum, flags: GLbitfield) -> GLsync {
+    pub fn fence_sync(&self, condition: GLenum, flags: GLbitfield) -> GLsync {
         panic!();
         //ptr::null()
     }
 
-    fn client_wait_sync(&self, sync: GLsync, flags: GLbitfield, timeout: GLuint64) -> GLenum {
+    pub fn client_wait_sync(&self, sync: GLsync, flags: GLbitfield, timeout: GLuint64) -> GLenum {
         panic!();
     }
 
-    fn wait_sync(&self, sync: GLsync, flags: GLbitfield, timeout: GLuint64) {
+    pub fn wait_sync(&self, sync: GLsync, flags: GLbitfield, timeout: GLuint64) {
         panic!();
     }
 
-    fn texture_range_apple(&self, target: GLenum, data: &[u8]) {
+    pub fn texture_range_apple(&self, target: GLenum, data: &[u8]) {
         panic!();
     }
 
-    fn delete_sync(&self, sync: GLsync) {
+    pub fn delete_sync(&self, sync: GLsync) {
         panic!();
     }
 
-    fn gen_fences_apple(&self, n: GLsizei) -> Vec<GLuint> {
+    pub fn gen_fences_apple(&self, n: GLsizei) -> Vec<GLuint> {
         panic!();
         //Vec::new()
     }
 
-    fn delete_fences_apple(&self, fences: &[GLuint]) {
+    pub fn delete_fences_apple(&self, fences: &[GLuint]) {
         panic!();
     }
 
-    fn set_fence_apple(&self, fence: GLuint) {
+    pub fn set_fence_apple(&self, fence: GLuint) {
         panic!();
     }
 
-    fn finish_fence_apple(&self, fence: GLuint) {
+    pub fn finish_fence_apple(&self, fence: GLuint) {
         panic!();
     }
 
-    fn test_fence_apple(&self, fence: GLuint) {
+    pub fn test_fence_apple(&self, fence: GLuint) {
         panic!();
     }
 
-    fn test_object_apple(&self, object: GLenum, name: GLuint) -> GLboolean {
+    pub fn test_object_apple(&self, object: GLenum, name: GLuint) -> GLboolean {
         panic!();
         //0
     }
 
-    fn finish_object_apple(&self, object: GLenum, name: GLuint) {
+    pub fn finish_object_apple(&self, object: GLenum, name: GLuint) {
         panic!();
     }
 
     // GL_ARB_blend_func_extended
-    fn bind_frag_data_location_indexed(
+    pub fn bind_frag_data_location_indexed(
         &self,
         program: GLuint,
         color_number: GLuint,
@@ -2175,27 +2178,27 @@ impl Gl for Context {
         panic!();
     }
 
-    fn get_frag_data_index(&self, program: GLuint, name: &str) -> GLint {
+    pub fn get_frag_data_index(&self, program: GLuint, name: &str) -> GLint {
         panic!();
         //-1
     }
 
     // GL_KHR_debug
-    fn get_debug_messages(&self) -> Vec<DebugMessage> {
+    pub fn get_debug_messages(&self) -> Vec<DebugMessage> {
         Vec::new()
     }
 
-    fn provoking_vertex_angle(&self, _mode: GLenum) {
+    pub fn provoking_vertex_angle(&self, _mode: GLenum) {
         unimplemented!("This extension is GLES only");
     }
 
     // GL_KHR_blend_equation_advanced
-    fn blend_barrier_khr(&self) {
+    pub fn blend_barrier_khr(&self) {
         // No barrier required, so nothing to do
     }
 
     // GL_CHROMIUM_copy_texture
-    fn copy_texture_chromium(
+    pub fn copy_texture_chromium(
         &self,
         _source_id: GLuint,
         _source_level: GLint,
@@ -2210,7 +2213,7 @@ impl Gl for Context {
     ) {
         unimplemented!("This extension is GLES only");
     }
-    fn copy_sub_texture_chromium(
+    pub fn copy_sub_texture_chromium(
         &self,
         _source_id: GLuint,
         _source_level: GLint,
@@ -2231,7 +2234,7 @@ impl Gl for Context {
     }
 
     // GL_ANGLE_copy_texture_3d
-    fn copy_texture_3d_angle(
+    pub fn copy_texture_3d_angle(
         &self,
         _source_id: GLuint,
         _source_level: GLint,
@@ -2247,7 +2250,7 @@ impl Gl for Context {
         unimplemented!("Not supported by SWGL");
     }
 
-    fn copy_sub_texture_3d_angle(
+    pub fn copy_sub_texture_3d_angle(
         &self,
         _source_id: GLuint,
         _source_level: GLint,
@@ -2270,7 +2273,7 @@ impl Gl for Context {
         unimplemented!("Not supported by SWGL");
     }
 
-    fn buffer_storage(
+    pub fn buffer_storage(
         &self,
         target: GLenum,
         size: GLsizeiptr,
@@ -2280,7 +2283,7 @@ impl Gl for Context {
         unimplemented!("Not supported by SWGL");
     }
 
-    fn flush_mapped_buffer_range(&self, target: GLenum, offset: GLintptr, length: GLsizeiptr) {
+    pub fn flush_mapped_buffer_range(&self, target: GLenum, offset: GLintptr, length: GLsizeiptr) {
         unimplemented!("Not supported by SWGL");
     }
 }
