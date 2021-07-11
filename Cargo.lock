@@ -82,6 +82,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8aac770f1885fd7e387acedd76065302551364496e46b3dd00860b2f8359b9d"
 
 [[package]]
+name = "azul-peek-poke"
+version = "0.2.0"
+dependencies = [
+ "azul-peek-poke-derive",
+ "euclid 0.22.6",
+]
+
+[[package]]
+name = "azul-peek-poke-derive"
+version = "0.2.1"
+dependencies = [
+ "proc-macro2 1.0.10",
+ "quote 1.0.3",
+ "syn",
+ "synstructure",
+ "unicode-xid 0.2.0",
+]
+
+[[package]]
 name = "azul-webrender"
 version = "0.62.0"
 dependencies = [

@@ -4,6 +4,8 @@ members = [
     "webrender",
     "webrender_api",
     "wrench",
+    "peek-poke",
+    "peek-poke/peek-poke-derive",
     "example-compositor/compositor",
     "tileview",
 ]
