@@ -44,9 +44,9 @@ fn get_feature_string(kind: ImageBufferKind, texture_external_version: TextureEx
 fn has_platform_support(kind: ImageBufferKind, gl_type: &GlType) -> bool {
     match (kind, gl_type) {
         (ImageBufferKind::Texture2D, _) => true,
-        (ImageBufferKind::TextureRect, &GlType::Gles) => false,
+        (ImageBufferKind::TextureRect, &GlType::GlEs) => false,
         (ImageBufferKind::TextureRect, &GlType::Gl) => true,
-        (ImageBufferKind::TextureExternal, &GlType::Gles) => true,
+        (ImageBufferKind::TextureExternal, &GlType::GlEs) => true,
         (ImageBufferKind::TextureExternal, &GlType::Gl) => false,
     }
 }
@@ -637,7 +637,7 @@ impl Shaders {
         };
         let mut shader_flags = match gl_type {
             GlType::Gl => ShaderFeatureFlags::GL,
-            GlType::Gles => {
+            GlType::GlEs => {
                 let texture_external_flag = match texture_external_version {
                     TextureExternalVersion::ESSL3 => ShaderFeatureFlags::TEXTURE_EXTERNAL,
                     TextureExternalVersion::ESSL1 => ShaderFeatureFlags::TEXTURE_EXTERNAL_ESSL1,

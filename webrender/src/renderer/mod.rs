@@ -101,7 +101,7 @@ use crate::rectangle_occlusion as occlusion;
 use upload::{upload_to_texture_cache, UploadTexturePool};
 
 use euclid::{rect, Transform3D, Scale, default};
-use gleam::gl;
+use gl_context_loader::gl;
 use malloc_size_of::MallocSizeOfOps;
 use rayon::{ThreadPool, ThreadPoolBuilder};
 
@@ -2114,7 +2114,7 @@ impl Renderer {
             self.unbind_debug_overlay();
         }
 
-        if device_size.is_some() { 
+        if device_size.is_some() {
             // Inform the client that we are finished this composition transaction if native
             // compositing is enabled. This must be called after any debug / profiling compositor
             // surfaces have been drawn and added to the visual tree.

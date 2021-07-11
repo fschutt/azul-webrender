@@ -368,7 +368,7 @@ impl AsyncScreenshotGrabber {
     ) -> Box<dyn Iterator<Item = &'a [u8]> + 'a> {
         use AsyncScreenshotGrabberMode::*;
 
-        let is_angle = cfg!(windows) && gl_type == GlType::Gles;
+        let is_angle = cfg!(windows) && match gl_type { GlType::GlEs => true, _ => false };
 
         if self.mode == CompositionRecorder && !is_angle {
             // This is a non-ANGLE configuration. in this case, the recorded frames were captured
