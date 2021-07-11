@@ -121,7 +121,6 @@ dependencies = [
 name = "azul-webrender"
 version = "0.62.0"
 dependencies = [
- "azul-swgl",
  "azul-webrender-api",
  "azul-webrender-build",
  "azul-wr_malloc_size_of",
