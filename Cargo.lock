@@ -97,7 +97,7 @@ dependencies = [
  "derive_more",
  "dwrote",
  "etagere",
- "euclid",
+ "euclid 0.22.6",
  "freetype",
  "fxhash",
  "gl-context-loader",
@@ -135,7 +135,7 @@ dependencies = [
  "core-graphics 0.22.0",
  "crossbeam-channel",
  "derive_more",
- "euclid",
+ "euclid 0.22.6",
  "malloc_size_of_derive",
  "peek-poke",
  "serde",
@@ -588,9 +588,18 @@ version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "520d7de540904fd09b11c03a47d50a7ce4ff37d1aa763f454fa60d9088ef8356"
 dependencies = [
- "euclid",
+ "euclid 0.22.6",
  "serde",
  "svg_fmt",
+]
+
+[[package]]
+name = "euclid"
+version = "0.20.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2bb7ef65b3777a325d1eeefefab5b6d4959da54747e33bd6258e789640f307ad"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]
@@ -1151,14 +1160,18 @@ dependencies = [
 [[package]]
 name = "peek-poke"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d93fd6a575ebf1ac2668d08443c97a22872cfb463fd8b7ddd141e9f6be59af2f"
 dependencies = [
- "euclid",
+ "euclid 0.20.14",
  "peek-poke-derive",
 ]
 
 [[package]]
 name = "peek-poke-derive"
 version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6fb44a25c5bba983be0fc8592dfaf3e6d0935ce8be0c6b15b2a39507af34a926"
 dependencies = [
  "proc-macro2 1.0.10",
  "quote 1.0.3",
@@ -1186,7 +1199,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f3f7075ec146b897b6e0faca47adeb7ed3d4f6eaa8145bf19db17311081b3f63"
 dependencies = [
  "binary-space-partition",
- "euclid",
+ "euclid 0.22.6",
  "log",
  "num-traits",
 ]
@@ -1615,7 +1628,7 @@ version = "0.1.0"
 dependencies = [
  "azul-webrender",
  "azul-webrender-api",
- "euclid",
+ "euclid 0.22.6",
  "ron",
  "serde",
 ]
@@ -1754,7 +1767,7 @@ dependencies = [
  "azul-webrender",
  "core-foundation 0.7.0",
  "env_logger",
- "euclid",
+ "euclid 0.22.6",
  "gleam 0.13.1",
  "glutin",
  "rayon",
@@ -1839,7 +1852,7 @@ name = "wr_malloc_size_of"
 version = "0.0.1"
 dependencies = [
  "app_units",
- "euclid",
+ "euclid 0.22.6",
 ]
 
 [[package]]

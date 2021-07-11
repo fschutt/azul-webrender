@@ -1,5 +1,5 @@
 [package]
-name = "peek-poke-derive"
+name = "azul-peek-poke-derive"
 version = "0.2.1"
 authors = ["Dan Glastonbury <dan.glastonbury@gmail.com>"]
 repository = "https://github.com/servo/webrender"
