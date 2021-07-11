@@ -8,8 +8,8 @@ description = "Software OpenGL implementation for WebRender."
 
 [build-dependencies]
 cc = "1.0.46"
-glsl-to-cxx = { path = "../glsl-to-cxx" }
-webrender_build = { path = "../webrender_build" }
+glsl-to-cxx = { path = "../glsl-to-cxx", version = "0.1.0" }
+webrender_build = { path = "../webrender_build", version = "0.1.0" }
 
 [dependencies]
 gl-context-loader = { version = "0.1.3", default-features = false }
