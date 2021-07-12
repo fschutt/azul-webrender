@@ -1953,12 +1953,6 @@ impl Device {
             self.shader_is_ready = false;
         }
 
-        // We can usually unwind driver stacks on x86 so we don't need to manually instrument
-        // gl calls there. Timestamps can be pretty expensive on Windows (2us each and perhaps
-        // an opportunity to be descheduled?) which makes the profiles gathered with this
-        // turned on less useful so only profile on ARM.
-        self.gl = self.base_gl.take().unwrap();
-
         // Retrieve the currently set FBO.
         let mut default_read_fbo = [0];
         unsafe {
